@@ -1,0 +1,132 @@
+---
+title: "Assignment 1.3 : R Refresher"
+author: "Gourav Verma"
+date: "Sept 05 2020"
+output: 
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r, echo=FALSE, message=FALSE}
+
+setwd("C:/Users/f4puslg/Desktop/Garv/ML/Term 7 - Predictive Analysis/Assignments")
+
+library(ggplot2)
+
+```
+***
+#### **Que 1: Using the Bureau of Labor Statistics data, choose a dataset that interest you. Then generate summary statistics for 2 variables, plot some of the features (e.g., histograms, box plots, density plots, etc.) of several variables, and save the data locally as CSV files.**
+
+##### ==> Read the CSV File from Bureau of Labor Statistics
+```{r}
+OES <- read.csv("OES_data_M_2019.csv")
+```
+\
+
+##### ==> summary statistics for 2 variables
+##### **tot_emp:**	Estimated total employment rounded to the nearest 10 (excludes self-employed).
+```{r}
+summary(as.numeric(OES$tot_emp))
+```
+
+##### **a_mean:**	Mean annual wage 
+```{r}
+summary(as.numeric(OES$a_mean))
+```
+\
+
+##### ==> plot some of the features
+##### **Histogram of area_type**. Area type: 1= U.S.; 2= State; 3= U.S. Territory; 4= Metropolitan Statistical Area (MSA) or New England City and Town Area (NECTA); 6= Nonmetropolitan Area 
+```{r}
+hist(OES$area_type)
+```
+\
+
+##### **Box plot of annual mean wage**
+```{r}
+boxplot(as.numeric(OES$a_mean), main='Annual mean wage', ylab="mean Wage")
+```
+\
+
+##### **Density plot of Ownership type**
+##### Ownership type: 1= Federal Government; 2= State Government; 3= Local Government; 123= Federal, State, and Local Government; 235=Private, State, and Local Government; 35 = Private and Local Government; 5= Private; 57=Private, Local Government Gambling Establishments (Sector 71), and Local Government Casino Hotels (Sector 72); 58= Private plus State and Local Government Hospitals; 59= Private and Postal Service; 1235= Federal, State, and Local Government and Private Sector 
+```{r}
+d <- density(as.numeric(OES$occ_code))
+plot(d, main="Ownership type")
+polygon(d, col="red", border="blue")
+axis(side=1,at=OES$own_code)
+```
+\
+
+
+##### **Density plot**
+```{r}
+ggplot(OES, 
+       aes(x = as.numeric(OES$a_mean), 
+           fill = o_group)) +
+    geom_density(alpha = 0.4) +
+    labs(title = 'Salary distribution') +
+    xlab("Annual Mean Salary")
+```
+\
+
+##### **Density plot**
+```{r}
+AT <- as.factor(OES$area_type)  
+ggplot(OES, 
+       aes(x = as.numeric(OES$a_mean), 
+           fill = AT)) +
+    geom_density(alpha = 0.4) +
+    labs(title = 'Salary distribution for Area Type') +
+    xlab("Annual Mean Salary")
+```
+\
+
+##### **Write into CSV file**
+```{r}
+write.csv(OES, "OES_new.csv")
+```
+***
+
+#### **Que 2:** Explore Some Bivariate Relations
+##### **Scatter plot between annual mean wage and PRSE error**
+```{r, message=FALSE, warning=FALSE}
+plot(as.numeric(OES$a_mean), as.numeric(as.character(OES$mean_prse)), main="scatter plot", 
+     xlab="annual mean wage", ylab="Percent relative standard error (PRSE) for wage")
+```
+
+***
+#### **Que 3:** Organize a Data Report
+##### The default CSV read takes the datatypes automatically. For furhter analysis datatype conversion is required.
+##### a. **Area Type** is a categorical field with 5 distinct values. 
++ 1 = U.S.
++ 2 = State
++ 3 = U.S. Teritory
++ 4 = Metropolitan Statistical Area (MSA) or New England City and Town Area (NECTA)
++ 6 = Nonmetropolitan Area
+\
+ 
+##### b. **OCC code and Title** are categorical fields which contains code and title of occupation. 
+##### c. **h_mean and a_mean** are float variables which represents hourly and Annual mean wage respectively for perticular job code in the area type.
+##### d. **Ownership code** is a categorical variable for type of ownership of the occupation title.
+Ownership type: 
++ 1= Federal Government; 
++ 2= State Government; 
++ 3= Local Government; 
++ 123= Federal, State, and Local Government; 
++ 235=Private, State, and Local Government; 
++ 35 = Private and Local Government; 
++ 5= Private; 
++ 57=Private, Local Government Gambling Establishments (Sector 71), and Local Government Casino Hotels (Sector 72); 
++ 58= Private plus State and Local Government Hospitals; 
++ 59= Private and Postal Service; 
++ 1235= Federal, State, and Local Government and Private Sector
+\
+ 
+##### Below is the summary of the datatet
+```{r}
+str(OES)
+
+```
