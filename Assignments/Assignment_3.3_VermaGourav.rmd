@@ -1,0 +1,118 @@
+---
+title: 'Assignment 3.3 : Using data to Improve a Marketing Promotion'
+author: "Gourav Verma"
+date: "9/15/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, echo=FALSE, message=FALSE}
+
+setwd("C:/Users/f4puslg/Desktop/Garv/ML/Term 7 - Predictive Analysis/Assignments")
+
+library(ggplot2)
+library(lattice)
+
+```
+***
+
+##### Read Dodgers Major League Baseball data 2012
+```{r}
+Dodg <- read.csv("dodgers.csv")
+str(Dodg)
+```
+\
+
+##### Variables Description- 
+**General Information:**
+
++ **month** = Month the game was held.
++ **day** = Date the game was held.
++ **attend** = Number of attendees at the game.
++ **day_of_week** = Day the game was held.
++ **opponent** = Name of the opposing team.
++ **temp** = Temperature during the game.
++ **skies** = Weather conditions of the game.
++ **day_night** = Whether the game was played in the day or night.
+
+**Promotion:**
+
++ **cap** = Yes, if cap was given as a promotion. No, if otherwise.
++ **shirt** = Yes, if shirt was given as a promotion. No, if otherwise.
++ **firweworks** = Yes, if fireworks was given as a promotion. No, if otherwise.
++ **bobblehead** = Yes, if bobblehead was given as a promotion. No, if otherwise.
+
+##### Reorder the factor levels
+```{r}
+# Reorder the factor levels for day_of_week
+Dodg$day_of_week <- factor(Dodg$day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
+# Reorder the factor levels for month
+Dodg$month <- factor(Dodg$month, levels = c("APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT"))
+```
+
+\newpage
+
+##### Attendance by Day of the Week
+```{r}
+## Box plot to explore attendance by day of week
+plot(Dodg$day_of_week, Dodg$attend / 1000, 
+     main = "Dodgers Attendence By Day Of Week", 
+     xlab = "Day of Week", 
+     ylab = "Attendance (thousands)", 
+     col = "yellow", las = 1)
+```
+
+##### Interventions
++ **Tuesday** is the high attendance day, as the median line seems to be the highest. 
++ **Monday** seems lowest attendance day.
+
+\newpage
+
+##### Attendance by Month
+```{r}
+## Box plot to explore attendance by day of week
+plot(Dodg$month, Dodg$attend / 1000, 
+     main = "Dodgers Attendence By Month", 
+     xlab = "Month", 
+     ylab = "Attendance (thousands)", 
+     col = "gray", las = 1)
+```
+
+##### Interventions
++ **June** seems to be the high attendance Month as median seems to be highest.
++ Attendance seems to be the lowest in **October**.
+
+\newpage
+
+##### Attendance by Weather
+```{r}
+ggplot(Dodg, aes(x=temp, y=attend/1000, color=fireworks)) + 
+        geom_point() + 
+        facet_wrap(day_night~skies) + 
+        ggtitle("Dodgers Attendance By Temperature By Time of Game and Skies") +
+        theme(plot.title = element_text(lineheight=3, face="bold", color="black", size=10)) +
+        xlab("Temperature (Degree Farenheit)") +
+        ylab("Attendance (Thousands)")
+```
+
+##### Interventions
++ Highest attendance were obeserved when the temperature was less than 70 degree.
++ Majority of the games happened at night when sky was clear.
++ Attendance seems to be low with increase in temperature. 
+
+
+\newpage
+
+##### Attendance by Opponent
+```{r}
+ggplot(Dodg, aes(x=attend/1000, y=opponent, color=day_night)) + 
+        geom_point() + 
+        ggtitle("Dodgers Attendance By Opponent") +
+        theme(plot.title = element_text(lineheight=3, face="bold", color="black", size=10)) +
+        xlab("Attendance (Thousands)") +
+        ylab("Opponent (Visiting Team)")
+```
+
+##### Interventions
++ Games with opponents from large metropolitan areas show higher attendance consistently.
